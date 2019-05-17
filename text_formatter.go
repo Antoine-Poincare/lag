@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"fmt"
 )
 
 const (
@@ -106,6 +107,13 @@ func (f *TextFormatter) isColored() bool {
 	return isColored && !f.DisableColors
 }
 
+func milli(t time.Time) string {
+	return fmt.Sprintf("%d%02d%02d.%02d%02d%02d.%03d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second(),
+		t.Nanosecond() / 1e6)
+}
+
 // Format renders a single log entry
 func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	data := make(Fields)
@@ -141,9 +149,9 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 			var value interface{}
 			switch {
 			case key == f.FieldMap.resolve(FieldKeyTime):
-				value = entry.Time.Format(timestampFormat)
+				value = milli(entry.Time)
 			case key == f.FieldMap.resolve(FieldKeyLevel):
-				value = entry.Level.String()
+				value = entry.Level.String()[:1]
 			case key == f.FieldMap.resolve(FieldKeyMsg):
 				value = entry.Message
 			case key == f.FieldMap.resolve(FieldKeyLogrusError):
