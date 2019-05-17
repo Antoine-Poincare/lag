@@ -243,9 +243,8 @@ func (f *TextFormatter) appendKeyValue(b *bytes.Buffer, key string, value interf
 	if b.Len() > 0 {
 		b.WriteByte(' ')
 	}
-	b.WriteString(key)
-	b.WriteByte('=')
-	f.appendValue(b, value)
+	stringVal, _ := value.(string)
+	b.WriteString(stringVal)
 }
 
 func (f *TextFormatter) appendValue(b *bytes.Buffer, value interface{}) {
