@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"sort"
 	"strings"
 	"sync"
 	"time"
