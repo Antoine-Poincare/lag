@@ -120,50 +120,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	var funcVal, fileVal string
-
-	fixedKeys := make([]string, 0, 4+len(data))
-	if !f.DisableTimestamp {
-		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyTime))
-	}
-	fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLevel))
-	if entry.Message != "" {
-		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyMsg))
-	}
-	if entry.err != "" {
-		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLogrusError))
-	}
-	if entry.HasCaller() {
-		if f.CallerPrettyfier != nil {
-			funcVal, fileVal = f.CallerPrettyfier(entry.Caller)
-		} else {
-			funcVal = entry.Caller.Function
-			fileVal = fmt.Sprintf("%s:%d", entry.Caller.File, entry.Caller.Line)
-		}
-
-		if funcVal != "" {
-			fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyFunc))
-		}
-		if fileVal != "" {
-			fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyFile))
-		}
-	}
-
-	if !f.DisableSorting {
-		if f.SortingFunc == nil {
-			sort.Strings(keys)
-			fixedKeys = append(fixedKeys, keys...)
-		} else {
-			if !f.isColored() {
-				fixedKeys = append(fixedKeys, keys...)
-				f.SortingFunc(fixedKeys)
-			} else {
-				f.SortingFunc(keys)
-			}
-		}
-	} else {
-		fixedKeys = append(fixedKeys, keys...)
-	}
-
+	fixedKeys := [3]string{"level", "time", "msg"}
 	var b *bytes.Buffer
 	if entry.Buffer != nil {
 		b = entry.Buffer
